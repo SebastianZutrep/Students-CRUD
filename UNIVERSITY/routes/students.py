@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from database import get_db
 from models.student_model import Student, StudentResponse
 from controllers.student_controllers import StudentController
-# 
+
 router = APIRouter(prefix="/students")
 
 # se esta creando un endpoint
@@ -29,3 +29,6 @@ def update_student(student_id: int, update_data: Student, db: Session = Depends(
 @router.delete("/{student_id}")
 def delete_student(student_id: int, db: Session = Depends(get_db)):
     return StudentController.delete(db, student_id)
+
+
+

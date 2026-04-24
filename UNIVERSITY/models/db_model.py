@@ -5,6 +5,6 @@ class Students(Base):
     __tablename__ = "students"
 
     id = Column(Integer, primary_key=True, index=True)
-    name = Column(String, nullable = False)
-    age = Column(Integer, nullable = False)
-    grade = Column(Float, nullable = False)
+    name = Column(String, nullable=False)
+    age = Column(String, nullable=False)
+    grade = Column(Float, nullable=False)
