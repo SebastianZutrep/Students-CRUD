@@ -8,7 +8,7 @@ from pydantic import BaseModel, Field
 # informacion de los estudiantes
 # ... significa que es requerido
 class Student (BaseModel):
-    name: str = Field(...,min_lenght=2)
+    name: str = Field(...,min_length=2)
     age: int = Field (...,gt=0)
     grade: float = Field (..., ge=0,le=5)
 
