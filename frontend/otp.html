@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verificación OTP</title>
+    <link rel="stylesheet" href="otp.css">
+</head>
+<body>
+
+    <div class="otp-container">
+        <div class="icon-box">
+            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#007bff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+        </div>
+        
+        <h2>Verifica tu código</h2>
+        <p>Hemos enviado un código de 6 dígitos a tu correo electrónico. Ingrésalo a continuación para continuar.</p>
+
+        <form action="#">
+            <div class="otp-inputs">
+                <input type="text" maxlength="1" pattern="\d*" inputmode="numeric" required>
+                <input type="text" maxlength="1" pattern="\d*" inputmode="numeric" required>
+                <input type="text" maxlength="1" pattern="\d*" inputmode="numeric" required>
+                <input type="text" maxlength="1" pattern="\d*" inputmode="numeric" required>
+                <input type="text" maxlength="1" pattern="\d*" inputmode="numeric" required>
+                <input type="text" maxlength="1" pattern="\d*" inputmode="numeric" required>
+            </div>
+
+            <button type="submit" class="btn-verify">Verificar Código</button>
+        </form>
+
+        <div class="otp-footer">
+            ¿No recibiste el código? <br>
+            <a href="#" class="resend-link">Reenviar código</a>
+        </div>
+        
+        <a href="login.html" class="back-link">← Volver al login</a>
+    </div>
+
+</body>
+</html>
