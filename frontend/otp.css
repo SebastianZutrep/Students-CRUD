@@ -1,0 +1,116 @@
+/* Estilos generales */
+body {
+    font-family: 'Segoe UI', sans-serif;
+    background-color: #f4f7f6;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+/* Tarjeta OTP */
+.otp-container {
+    background-color: #ffffff;
+    padding: 3rem 2rem;
+    border-radius: 16px;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 420px;
+    text-align: center;
+}
+
+.icon-box {
+    margin-bottom: 1.5rem;
+}
+
+h2 {
+    color: #2d3436;
+    margin-bottom: 0.5rem;
+    font-size: 24px;
+}
+
+p {
+    color: #636e72;
+    font-size: 14px;
+    line-height: 1.5;
+    margin-bottom: 2rem;
+}
+
+/* Contenedor de los inputs */
+.otp-inputs {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 2rem;
+}
+
+/* Cada cuadro de número */
+.otp-inputs input {
+    width: 50px;
+    height: 60px;
+    text-align: center;
+    font-size: 24px;
+    font-weight: bold;
+    border: 2px solid #dfe6e9;
+    border-radius: 10px;
+    background-color: #f8f9fa;
+    transition: all 0.3s ease;
+}
+
+/* Efecto al hacer clic en un cuadro */
+.otp-inputs input:focus {
+    outline: none;
+    border-color: #45a049;
+    background-color: #fff;
+    box-shadow: 0 0 8px rgba(0, 255, 21, 0.2);
+}
+
+/* Botón de verificación */
+.btn-verify {
+    width: 100%;
+    padding: 14px;
+    background-color: #45a049;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.btn-verify:hover {
+    background-color: #45a049;
+}
+
+/* Footer y enlaces */
+.otp-footer {
+    margin-top: 2rem;
+    font-size: 14px;
+    color: #636e72;
+}
+
+.resend-link {
+    color: #45a049;
+    text-decoration: none;
+    font-weight: bold;
+    display: inline-block;
+    margin-top: 5px;
+}
+
+.resend-link:hover {
+    text-decoration: underline;
+}
+
+.back-link {
+    display: block;
+    margin-top: 1.5rem;
+    font-size: 13px;
+    color: #b2bec3;
+    text-decoration: none;
+}
+
+.back-link:hover {
+    color: #636e72;
+}

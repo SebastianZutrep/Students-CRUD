@@ -1,0 +1,98 @@
+/* Estilos generales y fondo */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f0f2f5;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+/* Tarjeta del Login */
+.login-container {
+    background-color: #ffffff;
+    padding: 2.5rem;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 380px;
+}
+
+h2 {
+    text-align: center;
+    color: #333;
+    margin-top: 0;
+    margin-bottom: 1.5rem;
+}
+
+/* Estructura del formulario */
+.form-group {
+    margin-bottom: 1.2rem;
+}
+
+label {
+    display: block;
+    margin-bottom: 0.6rem;
+    color: #444;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+/* Inputs de texto */
+input[type="email"] {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-sizing: border-box; /* Evita que el padding ensanche el input */
+    font-size: 16px;
+    transition: all 0.3s ease;
+}
+
+input[type="email"]:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.15);
+}
+
+/* Botón de acción */
+.btn-login {
+    width: 100%;
+    padding: 12px;
+    background-color: #45a049;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.1s ease;
+    margin-top: 1rem;
+}
+
+.btn-login:hover {
+    background-color: #0056b3;
+}
+
+.btn-login:active {
+    transform: scale(0.98);
+}
+
+/* Texto del pie */
+.footer-text {
+    text-align: center;
+    font-size: 14px;
+    color: #666;
+    margin-top: 1.5rem;
+}
+
+.footer-text a {
+    color: #007bff;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.footer-text a:hover {
+    text-decoration: underline;
+}
