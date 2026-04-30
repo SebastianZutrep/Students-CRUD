@@ -51,6 +51,27 @@
             </table>
         </div>
     </div>
-    <script src="index.js"></script>
+
+        <script>
+        //  guard — si no está autenticado, redirige al login
+        if (sessionStorage.getItem("authenticated") !== "true") {
+            window.location.href = "index.html";
+        }
+
+        // muestra el email del usuario en el header
+        const savedEmail = localStorage.getItem("user-email");
+        if (savedEmail) {
+            document.getElementById("user-email").textContent = savedEmail;
+        }
+
+        //  cierra sesión limpiando sessionStorage y localStorage
+        function logout() {
+            sessionStorage.removeItem("authenticated");
+            localStorage.removeItem("user-email");
+            window.location.href = "index.html";
+        }
+    </script>
+
+    <script src="students.js"></script>
 </body>
 </html>
