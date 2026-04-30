@@ -1,4 +1,3 @@
-
 const API_URL = window.location.origin + "/students/";
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -133,4 +132,10 @@ function deleteStudent(id) {
                 console.error("Error eliminando:", error);
             });
     }
+}
+
+function cerrarSesion() {
+    sessionStorage.removeItem("authenticated");
+    localStorage.removeItem("user-email");
+    window.location.href = "index.html";
 }
