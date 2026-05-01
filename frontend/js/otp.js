@@ -1,14 +1,10 @@
-const API_URL = "https://estudiantes-api-h4rx.onrender.com/students";
+const API_URL = "https://estudiantes-api-h4rx.onrender.com";
 
 document.addEventListener("DOMContentLoaded", () => {
     const form = document.getElementById("auth-form");
     const inputs = document.querySelectorAll(".otp-inputs input");
 
-
-
-    // Navegación entre cajas de autenticación
     inputs.forEach((input, i) => {
-        // Al escribir un dígito, saltar al siguiente
         input.addEventListener("input", (e) => {
             const val = e.target.value.replace(/\D/g, "");
             e.target.value = val;
@@ -17,14 +13,12 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         });
 
-        // borrar y volver al anterior
         input.addEventListener("keydown", (e) => {
             if (e.key === "Backspace" && !input.value && i > 0) {
                 inputs[i - 1].focus();
             }
         });
 
-        // Pegar código completo 
         input.addEventListener("paste", (e) => {
             e.preventDefault();
             const pasted = e.clipboardData.getData("text").replace(/\D/g, "").slice(0, 6);
@@ -36,31 +30,28 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
 
-    // Leer los 6 inputs y armar el código ─
     function getCode() {
         return Array.from(inputs).map(i => i.value).join("");
     }
 
-    // Submit 
     form.addEventListener("submit", async (e) => {
         e.preventDefault();
 
         const otp = getCode();
-        const email = localStorage.getItem("email");
+        const email = localStorage.getItem("email")?.trim().toLowerCase();
 
         if (!email) {
-            alert("No se encontró el correo. Vuelve al login.");
-            window.location.href = "/";
+            alert("No se encontró el correo.");
             return;
         }
 
         if (otp.length !== 6) {
-            alert("Por favor ingresa los 6 dígitos del código.");
+            alert("Ingresa los 6 dígitos.");
             return;
         }
 
         try {
-            const response = await fetch(`/auth/verify-otp`, {
+            const response = await fetch(`${API_URL}/auth/verify-otp`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ email, otp })
@@ -73,18 +64,17 @@ document.addEventListener("DOMContentLoaded", () => {
                 sessionStorage.setItem("authenticated", "true");
                 window.location.href = "/students.html";
             } else {
-                alert(data.message || "Código incorrecto.");
-                inputs.forEach(i => { i.value = ""; });
+                alert(data.message || data.detail || "Código incorrecto.");  // ← fix
+                inputs.forEach(i => i.value = "");
                 inputs[0].focus();
             }
 
         } catch (error) {
             console.error(error);
-            alert("Error en la verificación.");
+            alert("Error en verificación.");
         }
     });
 
-    // Reenviar código 
     const resendLink = document.querySelector(".resend-link");
     let cooldown = 0;
 
@@ -92,22 +82,24 @@ document.addEventListener("DOMContentLoaded", () => {
         e.preventDefault();
         if (cooldown > 0) return;
 
-        const email = localStorage.getItem("email");
+        const email = localStorage.getItem("email")?.trim().toLowerCase();
         if (!email) return;
 
         try {
-            const res = await fetch(`/auth/send-otp`, {
+            const res = await fetch(`${API_URL}/auth/send-otp`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ email })
             });
+
             const data = await res.json();
             alert(data.message || "Código reenviado.");
-            inputs.forEach(i => { i.value = ""; });
+            inputs.forEach(i => i.value = "");
             inputs[0].focus();
             startCooldown(60);
+
         } catch {
-            alert("Error al reenviar el código.");
+            alert("Error al reenviar código.");
         }
     });
 
@@ -119,9 +111,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const interval = setInterval(() => {
             cooldown--;
-            resendLink.textContent = cooldown > 0
-                ? `Reenviar código (${cooldown}s)`
-                : "Reenviar código";
+            resendLink.textContent =
+                cooldown > 0
+                    ? `Reenviar código (${cooldown}s)`
+                    : "Reenviar código";
 
             if (cooldown <= 0) {
                 clearInterval(interval);
@@ -131,6 +124,5 @@ document.addEventListener("DOMContentLoaded", () => {
         }, 1000);
     }
 
-    // Enfocar el primer input al cargar
     inputs[0].focus();
 });

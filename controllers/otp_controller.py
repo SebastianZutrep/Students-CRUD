@@ -1,129 +1,130 @@
-# controllers/otp_controller.py — CORREGIDO
-
+# controllers/otp_controller.py
 import secrets
-import smtplib
 import os
-from email.mime.text import MIMEText
-from email.mime.multipart import MIMEMultipart
-from datetime import datetime, timedelta
+import requests
+import redis
 from fastapi import HTTPException
 from dotenv import load_dotenv
 
 load_dotenv()
 
-# Configuración 
-SMTP_HOST     = os.getenv("SMTP_HOST", "smtp.gmail.com")
-SMTP_PORT     = int(os.getenv("SMTP_PORT", "587"))
-SMTP_USER     = os.getenv("SMTP_USER", "")
-SMTP_PASS     = os.getenv("SMTP_PASS", "")
-FROM_NAME     = os.getenv("FROM_NAME", "Sistema de Estudiantes")
+# Config Resend
+RESEND_API_KEY = os.getenv("RESEND_API_KEY")
+FROM_EMAIL = os.getenv("FROM_EMAIL", "onboarding@resend.dev")
 
 OTP_EXPIRY_MINUTES = 10
 
+# Config Redis
+REDIS_URL = os.getenv("REDIS_URL")
+r = redis.from_url(REDIS_URL) if REDIS_URL else None
 
-otp_storage: dict = {}
 
-
-# ── Helpers ─────────────────────────────────────────────────────────
+# ── Helpers ─────────────────────────────────────────────
 
 def generate_otp() -> str:
     return str(secrets.randbelow(900000) + 100000)
 
 
 def send_otp_email(email: str, code: str):
-    # si no hay credenciales SMTP, imprime en consola
-    if not SMTP_USER or not SMTP_PASS:
-        print(f"\n{'='*40}")
-        print(f"  [MODO DEV] OTP para {email}: {code}")
-        print(f"  Expira en {OTP_EXPIRY_MINUTES} minutos")
-        print(f"{'='*40}\n")
-        return
-
-    msg = MIMEMultipart("alternative")
-    msg["Subject"] = "Tu código de verificación"
-    msg["From"]    = f"{FROM_NAME} <{SMTP_USER}>"
-    msg["To"]      = email
-
-    html = f"""
-    <html>
-      <body style="font-family:'Segoe UI',sans-serif; background:#f4f7f6; padding:30px;">
-        <div style="max-width:420px; margin:auto; background:#fff; border-radius:16px;
-                    box-shadow:0 10px 30px rgba(0,0,0,.1); padding:40px; text-align:center;">
-
-          <h2 style="color:#2d3436; margin-bottom:8px;">Código de verificación</h2>
-          <p style="color:#636e72; font-size:14px; margin-bottom:28px;">
-            Válido por <strong>{OTP_EXPIRY_MINUTES} minutos</strong>.
-          </p>
-          <div style="background:#f0fdf4; border:2px solid #45a049; border-radius:12px;
-                      padding:20px; letter-spacing:12px; font-size:36px; font-weight:700;
-                      color:#2d6a2f;">
-            {code}
-          </div>
-          <p style="color:#b2bec3; font-size:12px; margin-top:24px;">
-            Si no solicitaste este código, ignora este mensaje.
-          </p>
-        </div>
-      </body>
-    </html>
+    """
+    Envía correo usando Resend API
     """
 
-    msg.attach(MIMEText(html, "html"))
+    # Modo desarrollo (sin API key)
+    if not RESEND_API_KEY:
+        print(f"\n[MODO DEV] OTP para {email}: {code}\n")
+        return
+
+    url = "https://api.resend.com/emails"
+
+    html = f"""
+    <div style="font-family:Arial; padding:20px">
+        <h2>Código de verificación</h2>
+        <p>Tu código es:</p>
+        <h1 style="letter-spacing:5px">{code}</h1>
+        <p>Expira en {OTP_EXPIRY_MINUTES} minutos.</p>
+    </div>
+    """
+
+    payload = {
+        "from": FROM_EMAIL,
+        "to": [email],
+        "subject": "Código de verificación",
+        "html": html
+    }
+
+    headers = {
+        "Authorization": f"Bearer {RESEND_API_KEY}",
+        "Content-Type": "application/json"
+    }
 
     try:
-        # SMTP con STARTTLS
-        with smtplib.SMTP(SMTP_HOST, SMTP_PORT) as server:
-            server.ehlo()
-            server.starttls()
-            server.login(SMTP_USER, SMTP_PASS)
-            server.sendmail(SMTP_USER, email, msg.as_string())
+        response = requests.post(url, json=payload, headers=headers)
+
+        if response.status_code >= 400:
+            print("Error Resend:", response.text)
+            raise HTTPException(
+                status_code=500,
+                detail="Error enviando correo con Resend"
+            )
+
     except Exception as e:
-        print(f"Error enviando email: {e}")
-        # Lanza HTTPException para que FastAPI devuelva un error legible al frontend
+        print("Error enviando email:", e)
         raise HTTPException(
             status_code=500,
-            detail="No se pudo enviar el correo. Verifica la configuración SMTP."
+            detail="No se pudo enviar el correo"
         )
 
 
-# Controlador 
+# ── Controller ─────────────────────────────────────────
 
 class AuthController:
 
     @staticmethod
     def send_otp(email: str) -> dict:
-        code    = generate_otp()
-        expires = datetime.utcnow() + timedelta(minutes=OTP_EXPIRY_MINUTES)
+        email = email.strip().lower()
+        code = generate_otp()
 
-        # Guarda código + tiempo de expiración 
-        otp_storage[email] = {"code": code, "expires": expires}
+        if r:
+            r.setex(f"otp:{email}", OTP_EXPIRY_MINUTES * 60, code)
+        else:
+            print(f"\n[MODO DEV - SIN REDIS] OTP para {email}: {code}\n")
 
         send_otp_email(email, code)
+
+        print("SEND EMAIL:", repr(email))
+        print("GENERATED OTP:", code)
+
         return {"message": "Código enviado al correo"}
+
 
     @staticmethod
     def verify_otp(email: str, otp: str) -> dict:
-        entry = otp_storage.get(email)
+        email = email.strip().lower()
 
-        if not entry:
+        if not r:
             raise HTTPException(
-                status_code=400,
-                detail="No hay un código pendiente para este correo."
+                status_code=500,
+                detail="Redis no configurado"
             )
 
-        # Verificación de expiración 
-        if datetime.utcnow() > entry["expires"]:
-            del otp_storage[email]
+        stored = r.get(f"otp:{email}")
+
+        if not stored:
             raise HTTPException(
                 status_code=400,
-                detail="El código ha expirado. Solicita uno nuevo."
+                detail="No hay código pendiente o ya expiró"
             )
 
-        if entry["code"] != otp:
+        if stored.decode() != otp:
             raise HTTPException(
                 status_code=400,
-                detail="Código incorrecto."
+                detail="Código incorrecto"
             )
 
-        # Elimina el código para que no pueda reutilizarse
-        del otp_storage[email]
+        r.delete(f"otp:{email}")
+
+        print("VERIFY EMAIL:", repr(email))
+        print("RECEIVED OTP:", otp)
+
         return {"valid": True, "message": "Código correcto"}
