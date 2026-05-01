@@ -1,3 +1,4 @@
+const API_URL = "https://estudiantes-api-h4rx.onrender.com/students";
 
 document.addEventListener("DOMContentLoaded", () => {
     const form = document.getElementById("auth-form");
@@ -59,7 +60,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         try {
-            const response = await fetch("/auth/verify-otp", {
+            const response = await fetch(`/auth/verify-otp`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ email, otp })
@@ -95,7 +96,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (!email) return;
 
         try {
-            const res = await fetch("/auth/send-otp", {
+            const res = await fetch(`/auth/send-otp`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ email })

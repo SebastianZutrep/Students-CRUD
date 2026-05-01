@@ -1,4 +1,5 @@
-const API_URL = "https://students-crud-qgyd.onrender.com/students/";
+
+const API_URL = "https://estudiantes-api-h4rx.onrender.com/students/";
 
 document.addEventListener('DOMContentLoaded', () => {
     loadStudents();
@@ -22,7 +23,7 @@ function saveStudents() {
 
     const studentData = { name, age, grade };
     const method = id ? "PUT" : "POST";
-    const url    = id ? `${API_URL}${id}` : API_URL;
+    const url = id ? `${API_URL}${id}` : API_URL;
 
     fetch(url, {
         method: method,
