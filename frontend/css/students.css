@@ -44,6 +44,7 @@ body {
 h1 {
     color: #333;
     margin-bottom: 30px;
+    font-size: 1.6em;
 }
 
 h2 {
@@ -76,6 +77,7 @@ input {
     padding: 8px;
     border: 1px solid #ddd;
     border-radius: 4px;
+    font-size: 1em;
 }
 
 button {
@@ -86,6 +88,7 @@ button {
     border-radius: 4px;
     cursor: pointer;
     margin-right: 10px;
+    font-size: 0.95em;
 }
 
 button:hover {
@@ -100,6 +103,7 @@ button.danger:hover {
     background: #da190b;
 }
 
+/* ── Tabla responsive ── */
 table {
     width: 100%;
     border-collapse: collapse;
@@ -122,6 +126,18 @@ tr:hover {
     background: #f5f5f5;
 }
 
+/* Botones dentro de la tabla (Editar / Eliminar) */
+td button {
+    display: block;
+    width: 100%;
+    margin-right: 0;
+    margin-bottom: 5px;
+}
+
+td button:last-child {
+    margin-bottom: 0;
+}
+
 .error {
     color: red;
     margin-top: 10px;
@@ -130,4 +146,82 @@ tr:hover {
 .success {
     color: green;
     margin-top: 10px;
+}
+
+/* ── Tablet (≤ 768px) ── */
+@media (max-width: 768px) {
+    body {
+        padding: 10px;
+    }
+
+    .container {
+        padding: 15px;
+        border-radius: 6px;
+    }
+
+    h1 {
+        font-size: 1.3em;
+        margin-bottom: 20px;
+    }
+
+    button {
+        margin-right: 6px;
+        margin-bottom: 8px;
+        padding: 9px 14px;
+    }
+
+    th,
+    td {
+        padding: 9px 8px;
+        font-size: 0.9em;
+    }
+}
+
+/* ── Móvil (≤ 480px) ── */
+@media (max-width: 480px) {
+    body {
+        padding: 6px;
+    }
+
+    .container {
+        padding: 12px;
+        border-radius: 4px;
+    }
+
+    h1 {
+        font-size: 1.15em;
+        margin-bottom: 15px;
+    }
+
+    h2 {
+        font-size: 1.05em;
+    }
+
+    /* Botones apilados en móvil */
+    form button {
+        display: block;
+        width: 100%;
+        margin-right: 0;
+        margin-bottom: 8px;
+    }
+
+    .boton-cerrar-sesion {
+        padding: 6px;
+    }
+
+    /* Tabla con scroll horizontal en pantallas muy pequeñas */
+    .table-wrapper {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    table {
+        min-width: 480px;
+    }
+
+    th,
+    td {
+        padding: 8px 6px;
+        font-size: 0.85em;
+    }
 }

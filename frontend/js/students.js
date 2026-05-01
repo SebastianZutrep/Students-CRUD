@@ -1,4 +1,3 @@
-
 const API_URL = "https://estudiantes-api-h4rx.onrender.com/students/";
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -75,8 +74,10 @@ function loadStudents() {
                     <td>${student.age}</td>
                     <td>${student.grade}</td>
                     <td>
-                        <button onclick="editStudent(${student.id})">Editar</button>
-                        <button class="danger" onclick="deleteStudent(${student.id})">Eliminar</button>
+                        <div style="display:flex; flex-direction:column; gap:5px; align-items:flex-start;">
+                            <button onclick="editStudent(${student.id})">Editar</button>
+                            <button class="danger" onclick="deleteStudent(${student.id})">Eliminar</button>
+                        </div>
                     </td>
                 `;
                 tbody.appendChild(row);
