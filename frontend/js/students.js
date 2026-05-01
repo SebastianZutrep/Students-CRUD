@@ -1,4 +1,4 @@
-const API_URL = window.location.origin + "/students/";
+const API_URL = "https://students-crud-qgyd.onrender.com/students/";
 
 document.addEventListener('DOMContentLoaded', () => {
     loadStudents();
