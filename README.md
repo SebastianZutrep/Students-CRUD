@@ -84,20 +84,16 @@ POST /auth/verify-otp
 Crea un archivo `.env` en la raíz del proyecto:
 
 ```env
-RESEND_API_KEY=re_xxxxxxxxxxxx
-FROM_EMAIL=tu@dominio.com
-REDIS_HOST=tu-host.upstash.io
-REDIS_PORT=6379
-REDIS_PASSWORD=tu_token_de_upstash
+RESEND_API_KEY=tu_api_key
+FROM_EMAIL=onboarding@resend.dev
+REDIS_URL="rediss://default:..."
 ```
 
 | Variable | Descripción |
 |----------|-------------|
 | `RESEND_API_KEY` | API Key de [resend.com](https://resend.com) para enviar correos |
-| `FROM_EMAIL` | Dirección de origen de los correos |
-| `REDIS_HOST` | Host de Redis (Upstash recomendado) |
-| `REDIS_PORT` | Puerto de Redis (por defecto 6379) |
-| `REDIS_PASSWORD` | Token de autenticación de Redis |
+| `FROM_EMAIL` | Dirección de origen de los correos (por defecto `onboarding@resend.dev`) |
+| `REDIS_URL` | URL completa de conexión a Redis (Upstash recomendado) |
 
 ---
 
