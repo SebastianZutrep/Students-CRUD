@@ -41,9 +41,8 @@
                             placeholder="Digite nota (0-5)">
                     </div>
                     <br>
-                    <div>
+                    <div class="form-buttons">
                         <button type="submit" id="submit-btn">Guardar</button>
-                       
                         <button type="button" onclick="cancelEdit()">Cancelar</button>
                     </div>
                 </form>
@@ -53,19 +52,21 @@
 
         <div>
             <h2>Lista de Estudiantes</h2>
-            <table>
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Nombre</th>
-                        <th>Edad</th>
-                        <th>Nota</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody id="students-list">
-                </tbody>
-            </table>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nombre</th>
+                            <th>Edad</th>
+                            <th>Nota</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="students-list">
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 

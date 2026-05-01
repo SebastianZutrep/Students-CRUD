@@ -209,19 +209,34 @@ td button:last-child {
         padding: 6px;
     }
 
-    /* Tabla con scroll horizontal en pantallas muy pequeñas */
-    .table-wrapper {
-        overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
+    /* Tabla sin min-width para que no se desborde */
+    table {
+        min-width: unset;
+        width: 100%;
     }
 
-    table {
-        min-width: 480px;
+    /* Ocultar columna ID en móvil para ganar espacio */
+    th:first-child,
+    td:first-child {
+        display: none;
     }
 
     th,
     td {
-        padding: 8px 6px;
-        font-size: 0.85em;
+        padding: 8px 4px;
+        font-size: 0.8em;
+    }
+
+    /* Columna acciones más estrecha */
+    td:last-child {
+        width: 70px;
+        min-width: 70px;
+    }
+
+    td button {
+        padding: 6px 8px;
+        font-size: 0.78em;
+        width: 100%;
+        margin-right: 0;
     }
 }
