@@ -15,8 +15,14 @@ FROM_EMAIL = os.getenv("FROM_EMAIL", "onboarding@resend.dev")
 OTP_EXPIRY_MINUTES = 10
 
 # Config Redis
-REDIS_URL = os.getenv("REDIS_URL")
-r = redis.from_url(REDIS_URL) if REDIS_URL else None
+REDIS_URL = os.getenv("REDIS_URL", "").strip().strip('"').strip("'") or None
+try:
+    r = redis.from_url(REDIS_URL) if REDIS_URL else None
+    if r:
+        print(f"[REDIS] Conectado OK: {str(REDIS_URL)[:30]}...")
+except Exception as e:
+    print(f"[REDIS] Error al conectar: {e}")
+    r = None
 
 
 # ── Helpers ─────────────────────────────────────────────
