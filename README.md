@@ -232,6 +232,10 @@ Verifica el código ingresado por el usuario.
 
 ---
 
-## 👨‍💻 Autor
+## 👨‍💻 Autores
+
+- Sebastián Pertuz
+- Laura Ocampo
+- Jimmy García
 
 Desarrollado como proyecto universitario.
