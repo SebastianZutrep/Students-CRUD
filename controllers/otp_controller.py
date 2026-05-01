@@ -1,4 +1,5 @@
 # controllers/otp_controller.py
+# controllers/otp_controller.py
 import secrets
 import os
 import requests
@@ -15,11 +16,24 @@ FROM_EMAIL = os.getenv("FROM_EMAIL", "onboarding@resend.dev")
 OTP_EXPIRY_MINUTES = 10
 
 # Config Redis
-REDIS_URL = os.getenv("REDIS_URL", "").strip().strip('"').strip("'") or None
+REDIS_HOST     = os.getenv("REDIS_HOST")
+REDIS_PORT     = int(os.getenv("REDIS_PORT", "6379"))
+REDIS_PASSWORD = os.getenv("REDIS_PASSWORD")
+
 try:
-    r = redis.from_url(REDIS_URL) if REDIS_URL else None
-    if r:
-        print(f"[REDIS] Conectado OK: {str(REDIS_URL)[:30]}...")
+    if REDIS_HOST and REDIS_PASSWORD:
+        r = redis.Redis(
+            host=REDIS_HOST,
+            port=REDIS_PORT,
+            password=REDIS_PASSWORD,
+            ssl=True,
+            ssl_cert_reqs=None,
+            decode_responses=False
+        )
+        print(f"[REDIS] Conectado OK: {REDIS_HOST}")
+    else:
+        print("[REDIS] Variables no configuradas, Redis desactivado.")
+        r = None
 except Exception as e:
     print(f"[REDIS] Error al conectar: {e}")
     r = None
