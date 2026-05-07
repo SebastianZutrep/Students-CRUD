@@ -1,4 +1,5 @@
 # controllers/otp_controller.py
+# controllers/otp_controller.py
 import secrets
 import os
 import requests
@@ -8,10 +9,9 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-# Config Brevo API
-BREVO_API_KEY = os.getenv("BREVO_API_KEY")
-FROM_EMAIL    = os.getenv("FROM_EMAIL", "sebas9991909@gmail.com")
-FROM_NAME     = os.getenv("FROM_NAME", "Sistema de Estudiantes")
+# Config Resend
+RESEND_API_KEY = os.getenv("RESEND_API_KEY")
+FROM_EMAIL = os.getenv("FROM_EMAIL", "onboarding@resend.dev")
 
 OTP_EXPIRY_MINUTES = 10
 
@@ -47,12 +47,15 @@ def generate_otp() -> str:
 
 def send_otp_email(email: str, code: str):
     """
-    Envía correo usando Brevo API HTTP
+    Envía correo usando Resend API
     """
 
-    if not BREVO_API_KEY:
+    # Modo desarrollo (sin API key)
+    if not RESEND_API_KEY:
         print(f"\n[MODO DEV] OTP para {email}: {code}\n")
         return
+
+    url = "https://api.resend.com/emails"
 
     html = f"""
     <div style="font-family:Arial; padding:20px">
@@ -64,36 +67,27 @@ def send_otp_email(email: str, code: str):
     """
 
     payload = {
-        "sender": {"name": FROM_NAME, "email": FROM_EMAIL},
-        "to": [{"email": email}],
+        "from": FROM_EMAIL,
+        "to": [email],
         "subject": "Código de verificación",
-        "htmlContent": html
+        "html": html
     }
 
     headers = {
-        "accept": "application/json",
-        "api-key": BREVO_API_KEY,
-        "content-type": "application/json"
+        "Authorization": f"Bearer {RESEND_API_KEY}",
+        "Content-Type": "application/json"
     }
 
     try:
-        response = requests.post(
-            "https://api.brevo.com/v3/smtp/email",
-            json=payload,
-            headers=headers
-        )
+        response = requests.post(url, json=payload, headers=headers)
 
         if response.status_code >= 400:
-            print("Error Brevo:", response.text)
+            print("Error Resend:", response.text)
             raise HTTPException(
                 status_code=500,
-                detail="Error enviando correo con Brevo"
+                detail="Error enviando correo con Resend"
             )
 
-        print(f"[BREVO] Correo enviado a {email}")
-
-    except HTTPException:
-        raise
     except Exception as e:
         print("Error enviando email:", e)
         raise HTTPException(
