@@ -74,8 +74,7 @@ def send_otp_email(email: str, code: str):
         msg["To"]      = email
         msg.attach(MIMEText(html, "html"))
 
-        with smtplib.SMTP(SMTP_HOST, SMTP_PORT) as server:
-            server.starttls()
+        with smtplib.SMTP_SSL(SMTP_HOST, SMTP_PORT) as server:
             server.login(SMTP_USER, SMTP_PASSWORD)
             server.sendmail(FROM_EMAIL, email, msg.as_string())
 
