@@ -1,21 +1,17 @@
 # controllers/otp_controller.py
 import secrets
 import os
-import smtplib
+import requests
 import redis
-from email.mime.multipart import MIMEMultipart
-from email.mime.text import MIMEText
 from fastapi import HTTPException
 from dotenv import load_dotenv
 
 load_dotenv()
 
-# Config Brevo SMTP
-SMTP_HOST     = os.getenv("SMTP_HOST", "smtp-relay.brevo.com")
-SMTP_PORT     = int(os.getenv("SMTP_PORT", "587"))
-SMTP_USER     = os.getenv("SMTP_USER")
-SMTP_PASSWORD = os.getenv("SMTP_PASSWORD")
-FROM_EMAIL    = os.getenv("FROM_EMAIL", "aa9736001@smtp-brevo.com")
+# Config Brevo API
+BREVO_API_KEY = os.getenv("BREVO_API_KEY")
+FROM_EMAIL    = os.getenv("FROM_EMAIL", "sebas9991909@gmail.com")
+FROM_NAME     = os.getenv("FROM_NAME", "Sistema de Estudiantes")
 
 OTP_EXPIRY_MINUTES = 10
 
@@ -51,10 +47,10 @@ def generate_otp() -> str:
 
 def send_otp_email(email: str, code: str):
     """
-    Envía correo usando Brevo SMTP
+    Envía correo usando Brevo API HTTP
     """
 
-    if not SMTP_USER or not SMTP_PASSWORD:
+    if not BREVO_API_KEY:
         print(f"\n[MODO DEV] OTP para {email}: {code}\n")
         return
 
@@ -67,19 +63,37 @@ def send_otp_email(email: str, code: str):
     </div>
     """
 
-    try:
-        msg = MIMEMultipart("alternative")
-        msg["Subject"] = "Código de verificación"
-        msg["From"]    = FROM_EMAIL
-        msg["To"]      = email
-        msg.attach(MIMEText(html, "html"))
+    payload = {
+        "sender": {"name": FROM_NAME, "email": FROM_EMAIL},
+        "to": [{"email": email}],
+        "subject": "Código de verificación",
+        "htmlContent": html
+    }
 
-        with smtplib.SMTP_SSL(SMTP_HOST, SMTP_PORT) as server:
-            server.login(SMTP_USER, SMTP_PASSWORD)
-            server.sendmail(FROM_EMAIL, email, msg.as_string())
+    headers = {
+        "accept": "application/json",
+        "api-key": BREVO_API_KEY,
+        "content-type": "application/json"
+    }
+
+    try:
+        response = requests.post(
+            "https://api.brevo.com/v3/smtp/email",
+            json=payload,
+            headers=headers
+        )
+
+        if response.status_code >= 400:
+            print("Error Brevo:", response.text)
+            raise HTTPException(
+                status_code=500,
+                detail="Error enviando correo con Brevo"
+            )
 
         print(f"[BREVO] Correo enviado a {email}")
 
+    except HTTPException:
+        raise
     except Exception as e:
         print("Error enviando email:", e)
         raise HTTPException(
